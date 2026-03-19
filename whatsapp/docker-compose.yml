@@ -1,0 +1,31 @@
+volumes:
+  wa_session:
+
+services:
+  whatsapp-bot:
+    container_name: ${GROUP}_${PROJECT}_whatsapp
+    env_file:
+      - ./.env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - wa_session:/app/.wwebjs_auth
+    networks:
+      - red_taller_software
+    tty: true
+    stdin_open: true
+    cap_add:
+      - SYS_ADMIN
+    shm_size: "1gb"
+    labels:
+      - "org.uach.group=${GROUP}"
+      - "org.uach.project=${PROJECT}"
+      - "org.uach.service=whatsapp"
+      - "logging=promtail"
+
+
+networks:
+  red_taller_software:
+    external: true

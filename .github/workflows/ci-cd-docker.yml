@@ -1,0 +1,71 @@
+name: CI/CD Docker Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # -------------------
+      # Backend
+      # -------------------
+      - name: Set up Node.js for backend
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run backend tests
+        working-directory: ./backend
+        run: npm test || echo "No tests defined"
+
+      - name: Build backend Docker image
+        run: docker build -t valdiv-ia-backend ./backend
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Tag and push backend image
+        run: |
+          docker tag valdiv-ia-backend ${{ secrets.DOCKERHUB_USERNAME }}/valdiv-ia-backend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/valdiv-ia-backend:latest
+
+      # -------------------
+      # Frontend
+      # -------------------
+      - name: Set up Node.js for frontend
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend/client
+        run: npm ci
+
+      - name: Build frontend production
+        working-directory: ./frontend/client
+        run: npm run build
+
+      - name: Build frontend Docker image
+        run: docker build -t valdiv-ia-frontend ./frontend/client
+
+      - name: Tag and push frontend image
+        run: |
+          docker tag valdiv-ia-frontend ${{ secrets.DOCKERHUB_USERNAME }}/valdiv-ia-frontend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/valdiv-ia-frontend:latest

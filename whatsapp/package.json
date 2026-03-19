@@ -1,0 +1,13 @@
+{
+  "name": "whatsapp-bot",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "wsp_bot.js",
+  "scripts": {
+    "start": "node wsp_bot.js"
+  },
+  "dependencies": {
+    "whatsapp-web.js": "^1.34.2",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

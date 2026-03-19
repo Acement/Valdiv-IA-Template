@@ -1,0 +1,243 @@
+services:
+  backend:
+    build: ./backend
+    container_name: ${GROUP}_${PROJECT}_backend
+    ports:
+      - "4005:4005"
+    environment:
+      - NODE_ENV=production
+    restart: always
+    networks:
+      - red_taller_software
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 700M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        tag: "{{.Name}}"
+    labels:
+      - "org.uach.group=${GROUP}"
+      - "org.uach.project=${PROJECT}"
+      - "org.uach.service=backend"
+      - "logging=promtail"
+
+  frontend:
+    build: ./frontend/client
+    container_name: ${GROUP}_${PROJECT}_frontend
+    ports:
+      - "3005:3005"
+    depends_on:
+      - backend
+    env_file:
+      - ./frontend/client/.env
+    restart: always
+    networks:
+      - red_taller_software
+    deploy:
+      resources:
+        limits:
+          cpus: "0.30"
+          memory: 400M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        tag: "{{.Name}}"
+    labels:
+      - "org.uach.group=${GROUP}"
+      - "org.uach.project=${PROJECT}"
+      - "org.uach.service=frontend"
+      - "logging=promtail"
+
+  mongo:
+    image: mongo:4.4
+    container_name: ${GROUP}_${PROJECT}_db_2
+    ports:
+      - "27017:27017"
+    env_file:
+      - ./databases/historial/.env
+    volumes:
+      - mongo_data:/data/db
+      - ./databases/historial/mongo-init/init.js:/docker-entrypoint-initdb.d/init.js
+    restart: always
+    networks:
+      - red_taller_software
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        tag: "{{.Name}}"
+    labels:
+      - "org.uach.group=${GROUP}"
+      - "org.uach.project=${PROJECT}"
+      - "org.uach.service=database"
+      - "logging=promtail"
+
+  postgres:
+    image: postgres:15
+    container_name: ${GROUP}_${PROJECT}_db_1
+    env_file:
+      - ./databases/historial/.env
+    environment:
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./databases/historial/postgres-init/:/docker-entrypoint-initdb.d/
+    restart: always
+    networks:
+      - red_taller_software
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        tag: "{{.Name}}"
+    labels:
+      - "org.uach.group=${GROUP}"
+      - "org.uach.project=${PROJECT}"
+      - "org.uach.service=database"
+      - "logging=promtail"
+
+  redis:
+    image: redis/redis-stack:latest
+    container_name: ${GROUP}_${PROJECT}_db_3
+    ports:
+      - "6379:6379"
+      - "8002:8001"
+    volumes:
+      - ./databases/redis_data:/data
+    # Este comando es importante para la persistencia, lo mantuve de la version nube
+    command: redis-stack-server --dir /data --appendonly yes
+    restart: unless-stopped
+    networks:
+      - red_taller_software
+    labels:
+      - "org.uach.group=${GROUP}"
+      - "org.uach.project=${PROJECT}"
+      - "org.uach.service=redis"
+      - "logging=promtail"
+
+  context-server:
+    build:
+      context: ./context/
+    container_name: ${GROUP}_${PROJECT}_context
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    networks:
+      - red_taller_software
+    labels:
+      - "org.uach.group=${GROUP}"
+      - "org.uach.project=${PROJECT}"
+      - "org.uach.service=context"
+      - "logging=promtail"
+
+  ingest_redis:
+    build: ./ingest
+    container_name: ${GROUP}_${PROJECT}_ingest
+    working_dir: /app
+    volumes:
+      - ./ingest:/app
+    env_file:
+      - ./ingest/.env
+    networks:
+      - red_taller_software
+    command: ["sleep", "infinity"]
+    restart: "no"
+    profiles: ["manual"]
+    labels:
+      - "org.uach.group=${GROUP}"
+      - "org.uach.project=${PROJECT}"
+      - "org.uach.service=ingest"
+      - "logging=promtail"
+
+  crud-detector:
+    image: ollama/ollama:latest
+    container_name: ${GROUP}_${PROJECT}_crud_detector
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    networks:
+      - red_taller_software
+    restart: always
+    labels:
+      - "org.uach.group=${GROUP}"
+      - "org.uach.project=${PROJECT}"
+      - "org.uach.service=crud-detector"
+      - "logging=promtail"
+
+  crud-detector-api:
+    build: ./crud-detector
+    container_name: ${GROUP}_${PROJECT}_crud_detector_api
+    ports:
+      - "8089:8089"
+    env_file:
+      - ./crud-detector/.env
+    depends_on:
+      - crud-detector
+    networks:
+      - red_taller_software
+    restart: always
+    labels:
+      - "org.uach.group=${GROUP}"
+      - "org.uach.project=${PROJECT}"
+      - "org.uach.service=crud-detector-api"
+      - "logging=promtail"
+
+  ingest_user:
+    build:
+      context: .
+      dockerfile: backend/src/utils/index/ingest/Dockerfile
+    container_name: ${GROUP}_${PROJECT}_ingest_user
+    ports:
+      - "8010:8010"
+    depends_on:
+      - redis
+    env_file:
+      - backend/src/utils/index/ingest/.env
+    networks:
+      - red_taller_software
+    restart: always
+    labels:
+      - "org.uach.group=${GROUP}"
+      - "org.uach.project=${PROJECT}"
+      - "org.uach.service=ingest_user"
+      - "logging=promtail"
+
+volumes:
+  mongo_data:
+  postgres_data:
+  ollama_models:
+  redis_data:
+    external: true
+
+networks:
+  red_taller_software:
+    external: true

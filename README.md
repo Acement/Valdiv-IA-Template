@@ -60,15 +60,14 @@ Todos los archivos `.env.example` deben ser **renombrados a `.env`** y sus varia
 Renombrar los siguientes archivos:
 
 ```bash
-./backend/node_modules/whatsapp-web.js/.env.example
-./backend/.env.example
-./databases/historial/.env.example
-./frontend/client/.env.example
-./whatsapp/.env.example
-./crud-detector/.env.example
-./ingest/.env.example
-./.env.example
-./backend/src/utils/index/ingest/.env.example
+mv ./backend/.env.example ./backend/.env
+mv ./databases/historial/.env.example ./databases/historial/.env
+mv ./frontend/client/.env.example ./frontend/client/.env
+mv ./whatsapp/.env.example ./whatsapp/.env
+mv ./crud-detector/.env.example ./crud-detector/.env
+mv ./ingest/.env.example ./ingest/.env
+mv ./.env.example ./.env
+mv ./ingest/.env.example ./backend/src/utils/index/ingest/.env
 ```
 
 Ejemplo general:

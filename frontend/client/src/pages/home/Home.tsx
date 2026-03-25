@@ -51,7 +51,7 @@ export default function HeroChatbot() {
                 Comenzar
               </Button>
               <Button as={Link} to='/us' variant={'link'} colorScheme={'blue'}>
-                Saber más
+                Saber más información
               </Button>
               <Button as={Link} to='/admin' variant={'link'} colorScheme={'blue'}>
                 Admin

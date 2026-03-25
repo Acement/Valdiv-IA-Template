@@ -177,40 +177,6 @@ services:
       - "org.uach.service=ingest"
       - "logging=promtail"
 
-  crud-detector:
-    image: ollama/ollama:latest
-    container_name: ${GROUP}_${PROJECT}_crud_detector
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_models:/root/.ollama
-    networks:
-      - red_taller_software
-    restart: always
-    labels:
-      - "org.uach.group=${GROUP}"
-      - "org.uach.project=${PROJECT}"
-      - "org.uach.service=crud-detector"
-      - "logging=promtail"
-
-  crud-detector-api:
-    build: ./crud-detector
-    container_name: ${GROUP}_${PROJECT}_crud_detector_api
-    ports:
-      - "8089:8089"
-    env_file:
-      - ./crud-detector/.env
-    depends_on:
-      - crud-detector
-    networks:
-      - red_taller_software
-    restart: always
-    labels:
-      - "org.uach.group=${GROUP}"
-      - "org.uach.project=${PROJECT}"
-      - "org.uach.service=crud-detector-api"
-      - "logging=promtail"
-
   ingest_user:
     build:
       context: .

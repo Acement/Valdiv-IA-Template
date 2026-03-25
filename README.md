@@ -68,6 +68,7 @@ Renombrar los siguientes archivos:
 ./crud-detector/.env.example
 ./ingest/.env.example
 ./.env.example
+./backend/src/utils/index/ingest/.env.example
 ```
 
 Ejemplo general:
@@ -83,6 +84,7 @@ OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ### 5.1 Build y ejecución inicial
 
 ```bash
+docker network create red_taller_software
 docker compose up -d --build
 ```
 
@@ -168,3 +170,43 @@ Este comando:
 - Detiene todos los contenedores
 - Elimina volúmenes temporales
 - Mantiene las imágenes construidas
+
+## 10. Optimización de prueba
+
+Se dejo de lado los siguientes contenedores para probar el despliegue más rápido
+
+```bash
+  crud-detector:
+    image: ollama/ollama:latest
+    container_name: ${GROUP}_${PROJECT}_crud_detector
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    networks:
+      - red_taller_software
+    restart: always
+    labels:
+      - "org.uach.group=${GROUP}"
+      - "org.uach.project=${PROJECT}"
+      - "org.uach.service=crud-detector"
+      - "logging=promtail"
+
+  crud-detector-api:
+    build: ./crud-detector
+    container_name: ${GROUP}_${PROJECT}_crud_detector_api
+    ports:
+      - "8089:8089"
+    env_file:
+      - ./crud-detector/.env
+    depends_on:
+      - crud-detector
+    networks:
+      - red_taller_software
+    restart: always
+    labels:
+      - "org.uach.group=${GROUP}"
+      - "org.uach.project=${PROJECT}"
+      - "org.uach.service=crud-detector-api"
+      - "logging=promtail"
+```

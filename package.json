@@ -1,8 +1,11 @@
 {
   "dependencies": {
+    "chai": "^6.2.2",
     "ioredis": "^5.8.2",
     "node-fetch": "^3.3.2",
     "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1"
+    "remark-gfm": "^4.0.1",
+    "selenium": "^2.20.0",
+    "selenium-webdriver": "^4.42.0"
   }
 }

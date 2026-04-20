@@ -1,0 +1,9 @@
+Integrantes:
+- Pablo Cisterna
+- Martín Maza
+
+Caso de prueba: HU-F031 (F30. Registrarse con correo electrónico):
+https://youtu.be/yuujqfvKtY8
+
+Caso de prueba: HU-F004 (F4. Entrada de texto):
+https://youtu.be/AfNyVTl1CUs

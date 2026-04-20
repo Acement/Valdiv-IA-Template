@@ -14,8 +14,8 @@ async function historyTest() {
     .build();
 
   const baseUrl = "http://localhost:3005";
-  const email = process.env.TEST_USER_EMAIL || "martin@mail.com";
-  const password = process.env.TEST_USER_PASSWORD || "1234qwer";
+  const email = process.env.TEST_USER_EMAIL || "Test@sitio.cl";
+  const password = process.env.TEST_USER_PASSWORD || "12341234";
   const message = `HistTest-${Date.now().toString().slice(-6)}`;
 
   try {

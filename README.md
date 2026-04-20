@@ -209,3 +209,24 @@ Se dejo de lado los siguientes contenedores para probar el despliegue más rápi
       - "org.uach.service=crud-detector-api"
       - "logging=promtail"
 ```
+
+## 11. Scripts de prueba (Tests)
+
+Están disponible dos scripts de prueba, uno para probar el registro de un usuario y otro para la verificación del guardado de un chat en el historial.
+
+Se recomienda primero ejecutar el script de registro y luego el de historial, ya que este último requiere de una cuenta creada con anterioridad.
+Además, el script de registro requiere que la cuenta no haya sido creada con anterioridad.
+
+Puede ejecutar las pruebas con:
+
+Primero, en la carpeta raíz:
+
+```bash
+npm install
+```
+Luego:
+
+```bash
+node tests/signUpTest.js 
+node tests/historialTest.js 
+```

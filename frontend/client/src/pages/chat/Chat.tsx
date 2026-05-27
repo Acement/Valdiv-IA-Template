@@ -503,6 +503,10 @@ const handleSend = async (prompt?: string) => {
     setInput(prompt);
   };
 
+  const handleClearQuickPrompt = () => {
+    setSelectedQuickPrompt(null);
+  };
+
   const { 
     open: isDislikeOpen,
     onOpen: onDislikeOpen, 
@@ -757,6 +761,7 @@ return (
             maxChars={MAX_CHARS}
             quickPrompts={QUICK_PROMPTS}
             onQuickPromptSelect={handleQuickPromptSelect}
+            onClearQuickPrompt={handleClearQuickPrompt}
             activeQuickPrompt={selectedQuickPrompt}
             onVoiceResult={handleVoiceResult}
             isTranscribing={isTranscribing}

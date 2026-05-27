@@ -16,6 +16,7 @@ interface MessageInputProps {
   quickPrompts?: string[];
   onQuickPromptSelect?: (prompt: string) => void;
   activeQuickPrompt?: string | null;
+  onClearQuickPrompt?: () => void;
 
   isTranscribing?: boolean;
   onTranscribeStart?: () => void;
@@ -34,6 +35,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
   quickPrompts = [],
   onQuickPromptSelect,
   activeQuickPrompt,
+  onClearQuickPrompt,
   onVoiceResult,
   isTranscribing = false,
   onTranscribeStart,
@@ -94,9 +96,16 @@ const MessageInput: React.FC<MessageInputProps> = ({
               Pulsa uno para cargarlo en el mensaje y seguir editando.
             </Text>
             {activeQuickPrompt && (
-              <Text fontSize="xs" color="green.600" mb={2}>
-                Atajo activo: {activeQuickPrompt}
-              </Text>
+              <Flex align="center" gap={2} mb={2}>
+                <Text fontSize="xs" color="green.600">
+                  Atajo activo: {activeQuickPrompt}
+                </Text>
+                {onClearQuickPrompt && (
+                  <Button size="xs" variant="ghost" onClick={onClearQuickPrompt}>
+                    Limpiar
+                  </Button>
+                )}
+              </Flex>
             )}
             <Flex gap={2} wrap="wrap">
               {quickPrompts.map((prompt) => (

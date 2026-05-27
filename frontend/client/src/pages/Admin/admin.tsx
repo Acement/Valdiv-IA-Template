@@ -18,7 +18,7 @@ const Admin = () => {
 
     try {
       const res = await fetch(`${API_URL}/api/users_admin/auth/login`, {
-        method: "POST",
+        method: "GET",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });

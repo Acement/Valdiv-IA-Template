@@ -175,6 +175,10 @@ const MessageInput: React.FC<MessageInputProps> = ({
           {input.length} / {maxChars}
         </Text>
       </Flex>
+
+      <Text mt={1} fontSize="xs" color="gray.400" textAlign="center">
+        Demo local: este detalle queda solo en tu repo.
+      </Text>
     </Box>
   );
 };

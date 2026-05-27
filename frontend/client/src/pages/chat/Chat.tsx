@@ -38,10 +38,10 @@ const MAX_CONTEXT_MESSAGES = 10; // Número máximo de mensajes a enviar como co
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4005";
 const MAX_CHARS = parseInt(import.meta.env.VITE_MAX_CHARS || "5000");
 const QUICK_PROMPTS = [
-  "Resume el contexto en 3 pasos",
-  "¿Qué trámites están disponibles?",
-  "Muéstrame opciones de turismo",
-  "Necesito ayuda con pagos o servicios",
+  "Resume el trámite en 3 pasos",
+  "Lista requisitos y documentos",
+  "Indica horarios y contacto",
+  "Muéstrame opciones de atención",
 ];
 const WELCOME_MESSAGE: ChatMsg = {
   role: "assistant",

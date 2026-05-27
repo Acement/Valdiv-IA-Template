@@ -90,6 +90,9 @@ const MessageInput: React.FC<MessageInputProps> = ({
             <Text fontSize="xs" color="gray.500" mb={2} fontWeight="semibold">
               Atajos rápidos
             </Text>
+            <Text fontSize="xs" color="gray.400" mb={2}>
+              Pulsa uno para cargarlo en el mensaje y seguir editando.
+            </Text>
             {activeQuickPrompt && (
               <Text fontSize="xs" color="green.600" mb={2}>
                 Atajo activo: {activeQuickPrompt}

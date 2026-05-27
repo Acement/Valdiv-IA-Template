@@ -18,7 +18,11 @@ const Admin = () => {
 
     try {
       const res = await fetch(`${API_URL}/api/users_admin/auth/login`, {
+<<<<<<< HEAD
         method: "PUT",
+=======
+        method: "GET",
+>>>>>>> d0fc6ac (Cambio de endpoint)
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });

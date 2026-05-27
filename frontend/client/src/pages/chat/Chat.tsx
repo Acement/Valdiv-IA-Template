@@ -37,6 +37,12 @@ type ChatSession = {
 const MAX_CONTEXT_MESSAGES = 10; // Número máximo de mensajes a enviar como contexto
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4005";
 const MAX_CHARS = parseInt(import.meta.env.VITE_MAX_CHARS || "5000");
+const QUICK_PROMPTS = [
+  "Resume el contexto en 3 pasos",
+  "¿Qué trámites están disponibles?",
+  "Muéstrame opciones de turismo",
+  "Necesito ayuda con pagos o servicios",
+];
 const WELCOME_MESSAGE: ChatMsg = {
   role: "assistant",
   content: "¡Hola! 👋 Soy tu asistente, ¿en qué puedo ayudarte hoy?",
@@ -741,6 +747,8 @@ return (
             handleKeyDown={handleKeyDown}
             isSending={isSending}
             maxChars={MAX_CHARS}
+            quickPrompts={QUICK_PROMPTS}
+            onQuickPromptSelect={setInput}
             onVoiceResult={handleVoiceResult}
             isTranscribing={isTranscribing}
             onTranscribeStart={() => setIsTranscribing(true)}

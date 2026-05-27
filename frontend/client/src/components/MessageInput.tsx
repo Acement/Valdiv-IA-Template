@@ -15,6 +15,7 @@ interface MessageInputProps {
   maxChars: number;
   quickPrompts?: string[];
   onQuickPromptSelect?: (prompt: string) => void;
+  activeQuickPrompt?: string | null;
 
   isTranscribing?: boolean;
   onTranscribeStart?: () => void;
@@ -32,6 +33,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
   maxChars,
   quickPrompts = [],
   onQuickPromptSelect,
+  activeQuickPrompt,
   onVoiceResult,
   isTranscribing = false,
   onTranscribeStart,
@@ -88,6 +90,11 @@ const MessageInput: React.FC<MessageInputProps> = ({
             <Text fontSize="xs" color="gray.500" mb={2} fontWeight="semibold">
               Atajos rápidos
             </Text>
+            {activeQuickPrompt && (
+              <Text fontSize="xs" color="green.600" mb={2}>
+                Atajo activo: {activeQuickPrompt}
+              </Text>
+            )}
             <Flex gap={2} wrap="wrap">
               {quickPrompts.map((prompt) => (
                 <Button
@@ -95,9 +102,9 @@ const MessageInput: React.FC<MessageInputProps> = ({
                   size="sm"
                   variant="outline"
                   borderRadius="full"
-                  bg="gray.50"
-                  color="gray.700"
-                  borderColor="gray.300"
+                  bg={activeQuickPrompt === prompt ? "green.100" : "gray.50"}
+                  color={activeQuickPrompt === prompt ? "green.800" : "gray.700"}
+                  borderColor={activeQuickPrompt === prompt ? "green.300" : "gray.300"}
                   _hover={{ bg: "green.50", borderColor: "green.300" }}
                   onClick={() => handleQuickPromptClick(prompt)}
                   isDisabled={isSending || isTranscribing}

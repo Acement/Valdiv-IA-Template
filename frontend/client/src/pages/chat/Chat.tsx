@@ -57,6 +57,7 @@ const Chat: React.FC = () => {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
 
   const [input, setInput] = useState("");
+  const [selectedQuickPrompt, setSelectedQuickPrompt] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -477,6 +478,7 @@ const handleSend = async (prompt?: string) => {
   const handleNewChat = () => {
     setCurrentSessionId(null);
     setMessages([WELCOME_MESSAGE]);
+    setSelectedQuickPrompt(null);
     // AÑADIDO: Cierra el sidebar en móvil
     if (isMobile) {
       setIsSidebarOpen(false);
@@ -488,11 +490,17 @@ const handleSend = async (prompt?: string) => {
     if (session) {
       setCurrentSessionId(sessionId);
       setMessages(session.messages || []);
+      setSelectedQuickPrompt(null);
       // AÑADIDO: Cierra el sidebar en móvil
       if (isMobile) {
         setIsSidebarOpen(false);
       }
     }
+  };
+
+  const handleQuickPromptSelect = (prompt: string) => {
+    setSelectedQuickPrompt(prompt);
+    setInput(prompt);
   };
 
   const { 
@@ -748,7 +756,8 @@ return (
             isSending={isSending}
             maxChars={MAX_CHARS}
             quickPrompts={QUICK_PROMPTS}
-            onQuickPromptSelect={setInput}
+            onQuickPromptSelect={handleQuickPromptSelect}
+            activeQuickPrompt={selectedQuickPrompt}
             onVoiceResult={handleVoiceResult}
             isTranscribing={isTranscribing}
             onTranscribeStart={() => setIsTranscribing(true)}

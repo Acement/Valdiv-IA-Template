@@ -1,2 +1,2 @@
 def calcular_descuento(precio):
-    return precio * 0.10
+    return precio * 0.15

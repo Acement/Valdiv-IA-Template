@@ -13,6 +13,7 @@ interface MessageInputProps {
   handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   isSending: boolean;
   maxChars: number;
+  draftLabel?: string | null;
 
   isTranscribing?: boolean;
   onTranscribeStart?: () => void;
@@ -28,6 +29,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
   handleKeyDown,
   isSending,
   maxChars,
+  draftLabel,
   onVoiceResult,
   isTranscribing = false,
   onTranscribeStart,
@@ -71,6 +73,14 @@ const MessageInput: React.FC<MessageInputProps> = ({
         >
           <Spinner size="sm" />
           <Text>Transcribiendo audio…</Text>
+        </Flex>
+      )}
+
+      {draftLabel && (
+        <Flex mb={2} px={3} py={2} borderRadius="md" bg="blue.50" border="1px solid" borderColor="blue.100">
+          <Text fontSize="sm" color="blue.700">
+            {draftLabel}
+          </Text>
         </Flex>
       )}
 

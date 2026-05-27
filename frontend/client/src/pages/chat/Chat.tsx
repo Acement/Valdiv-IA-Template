@@ -37,6 +37,7 @@ type ChatSession = {
 const MAX_CONTEXT_MESSAGES = 10; // Número máximo de mensajes a enviar como contexto
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4005";
 const MAX_CHARS = parseInt(import.meta.env.VITE_MAX_CHARS || "5000");
+const DRAFT_STORAGE_KEY = "chat-draft-message";
 const WELCOME_MESSAGE: ChatMsg = {
   role: "assistant",
   content: "¡Hola! 👋 Soy tu asistente, ¿en qué puedo ayudarte hoy?",
@@ -76,6 +77,19 @@ const Chat: React.FC = () => {
   const token = localStorage.getItem("token");
 
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const savedDraft = localStorage.getItem(DRAFT_STORAGE_KEY);
+    if (savedDraft) {
+      setInput(savedDraft);
+    }
+  }, []);
+
+  useEffect(() => {
+    const trimmed = input.trim();
+    if (trimmed) localStorage.setItem(DRAFT_STORAGE_KEY, input);
+    else localStorage.removeItem(DRAFT_STORAGE_KEY);
+  }, [input]);
   
   // --- 🔹 Obtener email del usuario
   useEffect(() => {
@@ -154,6 +168,7 @@ const handleSend = async (prompt?: string) => {
 
     // si viene desde teclado/textarea, limpiamos input
     if (prompt === undefined) setInput("");
+    localStorage.removeItem(DRAFT_STORAGE_KEY);
 
     setIsSending(true);
     setIsLoading(true);
@@ -471,6 +486,8 @@ const handleSend = async (prompt?: string) => {
   const handleNewChat = () => {
     setCurrentSessionId(null);
     setMessages([WELCOME_MESSAGE]);
+    setInput("");
+    localStorage.removeItem(DRAFT_STORAGE_KEY);
     // AÑADIDO: Cierra el sidebar en móvil
     if (isMobile) {
       setIsSidebarOpen(false);
@@ -741,6 +758,7 @@ return (
             handleKeyDown={handleKeyDown}
             isSending={isSending}
             maxChars={MAX_CHARS}
+            draftLabel={input.trim() ? "Borrador guardado localmente" : null}
             onVoiceResult={handleVoiceResult}
             isTranscribing={isTranscribing}
             onTranscribeStart={() => setIsTranscribing(true)}

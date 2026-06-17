@@ -13,6 +13,7 @@ interface MessageInputProps {
   handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   isSending: boolean;
   maxChars: number;
+  draftLabel?: string | null;
   quickPrompts?: string[];
   onQuickPromptSelect?: (prompt: string) => void;
   activeQuickPrompt?: string | null;
@@ -32,10 +33,6 @@ const MessageInput: React.FC<MessageInputProps> = ({
   handleKeyDown,
   isSending,
   maxChars,
-  quickPrompts = [],
-  onQuickPromptSelect,
-  activeQuickPrompt,
-  onClearQuickPrompt,
   onVoiceResult,
   isTranscribing = false,
   onTranscribeStart,

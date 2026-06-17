@@ -13,6 +13,10 @@ interface MessageInputProps {
   handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   isSending: boolean;
   maxChars: number;
+  quickPrompts?: string[];
+  onQuickPromptSelect?: (prompt: string) => void;
+  activeQuickPrompt?: string | null;
+  onClearQuickPrompt?: () => void;
 
   isTranscribing?: boolean;
   onTranscribeStart?: () => void;
@@ -28,6 +32,10 @@ const MessageInput: React.FC<MessageInputProps> = ({
   handleKeyDown,
   isSending,
   maxChars,
+  quickPrompts = [],
+  onQuickPromptSelect,
+  activeQuickPrompt,
+  onClearQuickPrompt,
   onVoiceResult,
   isTranscribing = false,
   onTranscribeStart,
@@ -41,6 +49,11 @@ const MessageInput: React.FC<MessageInputProps> = ({
       textareaRef.current.style.borderRadius = "24px";
     }
   }, [input]);
+
+  const handleQuickPromptClick = (prompt: string) => {
+    if (onQuickPromptSelect) onQuickPromptSelect(prompt);
+    textareaRef.current?.focus();
+  };
 
   return (
     <Box
@@ -73,6 +86,47 @@ const MessageInput: React.FC<MessageInputProps> = ({
           <Text>Transcribiendo audio…</Text>
         </Flex>
       )}
+
+        {quickPrompts.length > 0 && (
+          <Box mb={3}>
+            <Text fontSize="xs" color="gray.500" mb={2} fontWeight="semibold">
+              Atajos rápidos
+            </Text>
+            <Text fontSize="xs" color="gray.400" mb={2}>
+              Pulsa uno para cargarlo en el mensaje y seguir editando.
+            </Text>
+            {activeQuickPrompt && (
+              <Flex align="center" gap={2} mb={2}>
+                <Text fontSize="xs" color="green.600">
+                  Atajo activo: {activeQuickPrompt}
+                </Text>
+                {onClearQuickPrompt && (
+                  <Button size="xs" variant="ghost" onClick={onClearQuickPrompt}>
+                    Limpiar
+                  </Button>
+                )}
+              </Flex>
+            )}
+            <Flex gap={2} wrap="wrap">
+              {quickPrompts.map((prompt) => (
+                <Button
+                  key={prompt}
+                  size="sm"
+                  variant="outline"
+                  borderRadius="full"
+                  bg={activeQuickPrompt === prompt ? "green.100" : "gray.50"}
+                  color={activeQuickPrompt === prompt ? "green.800" : "gray.700"}
+                  borderColor={activeQuickPrompt === prompt ? "green.300" : "gray.300"}
+                  _hover={{ bg: "green.50", borderColor: "green.300" }}
+                  onClick={() => handleQuickPromptClick(prompt)}
+                  isDisabled={isSending || isTranscribing}
+                >
+                  {prompt}
+                </Button>
+              ))}
+            </Flex>
+          </Box>
+        )}
 
       <Flex align="flex-end" gap={2}>
         <Box position="relative" flex="1">
@@ -165,6 +219,10 @@ const MessageInput: React.FC<MessageInputProps> = ({
           {input.length} / {maxChars}
         </Text>
       </Flex>
+
+      <Text mt={1} fontSize="xs" color="gray.400" textAlign="center">
+        Demo local: este detalle queda solo en tu repo.
+      </Text>
     </Box>
   );
 };

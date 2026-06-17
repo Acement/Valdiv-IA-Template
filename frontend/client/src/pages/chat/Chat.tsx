@@ -37,6 +37,12 @@ type ChatSession = {
 const MAX_CONTEXT_MESSAGES = 10; // Número máximo de mensajes a enviar como contexto
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4005";
 const MAX_CHARS = parseInt(import.meta.env.VITE_MAX_CHARS || "5000");
+const QUICK_PROMPTS = [
+  "Resume el trámite en 3 pasos",
+  "Lista requisitos y documentos",
+  "Indica horarios y contacto",
+  "Muéstrame opciones de atención",
+];
 const WELCOME_MESSAGE: ChatMsg = {
   role: "assistant",
   content: "¡Hola! 👋 Soy tu asistente, ¿en qué puedo ayudarte hoy?",
@@ -51,6 +57,7 @@ const Chat: React.FC = () => {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
 
   const [input, setInput] = useState("");
+  const [selectedQuickPrompt, setSelectedQuickPrompt] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -471,6 +478,7 @@ const handleSend = async (prompt?: string) => {
   const handleNewChat = () => {
     setCurrentSessionId(null);
     setMessages([WELCOME_MESSAGE]);
+    setSelectedQuickPrompt(null);
     // AÑADIDO: Cierra el sidebar en móvil
     if (isMobile) {
       setIsSidebarOpen(false);
@@ -482,11 +490,21 @@ const handleSend = async (prompt?: string) => {
     if (session) {
       setCurrentSessionId(sessionId);
       setMessages(session.messages || []);
+      setSelectedQuickPrompt(null);
       // AÑADIDO: Cierra el sidebar en móvil
       if (isMobile) {
         setIsSidebarOpen(false);
       }
     }
+  };
+
+  const handleQuickPromptSelect = (prompt: string) => {
+    setSelectedQuickPrompt(prompt);
+    setInput(prompt);
+  };
+
+  const handleClearQuickPrompt = () => {
+    setSelectedQuickPrompt(null);
   };
 
   const { 
@@ -741,6 +759,10 @@ return (
             handleKeyDown={handleKeyDown}
             isSending={isSending}
             maxChars={MAX_CHARS}
+            quickPrompts={QUICK_PROMPTS}
+            onQuickPromptSelect={handleQuickPromptSelect}
+            onClearQuickPrompt={handleClearQuickPrompt}
+            activeQuickPrompt={selectedQuickPrompt}
             onVoiceResult={handleVoiceResult}
             isTranscribing={isTranscribing}
             onTranscribeStart={() => setIsTranscribing(true)}
